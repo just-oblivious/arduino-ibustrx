@@ -10,7 +10,9 @@ Arduino library for sending and receiving messages over the BMW infotainment bus
 
 ### Schematics
 **Warning**: the IBUS operates at 12-15 volts, level shifting is required in order to make it work with the Arduino. Connecting the IBUS directly to your Arduino will let the magic smoke out.
+
 **Warning**: the resistor values shown in these schematics are only suitable for Arduino boards that operate at a logic level of 5 volts.
+
 **Note**: both schematics do not include any form of isolation or input protection. If you're worried about spikes on the IBUS causing damage to your Arduino you should definitely use an opto-isolater (or other form of isolation device).
 
 ##### Basic receive only interface
