@@ -14,6 +14,7 @@ static const uint8_t M_TEL = 0xC8; // TEL: telephone module
 static const uint8_t M_LCM = 0xD0; // LCM: light control module
 
 // GM5 input/output addresses
+static const uint8_t GM5_SET_IO = 0x0C; // "set IO" diagnostic command
 static const uint8_t GM5_BTN_DOME_LIGHT = 0x01; // dome light button
 static const uint8_t GM5_BTN_CENTER_LOCK = 0x03; // center console lock/unlock button
 static const uint8_t GM5_BTN_TRUNK_OPEN = 0x05; // interior trunk unlock button

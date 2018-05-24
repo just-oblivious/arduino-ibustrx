@@ -1,5 +1,5 @@
 /*
-  IbusTrx (v2.3.0)
+  IbusTrx (v2.4.0)
   Arduino library for sending and receiving messages over the BMW infotainment bus (IBUS).
   Author: D. van Gent
   More info: https://0x7b.nl/ibus
@@ -9,19 +9,20 @@
 
 #include "IbusTrx.h"
 // open serial port
-void IbusTrx::begin() {
-  Serial.begin(9600, SERIAL_8E1);
+void IbusTrx::begin(HardwareSerial &userPort) {
+  serialPort = &userPort;
+  serialPort->begin(9600, SERIAL_8E1);
 }
 
 // close serial port
 void IbusTrx::end() {
-  Serial.end();
+  serialPort->end();
   clearBuffer();
 }
 
 // transmit and receive
 // returns true if a valid IBUS message has been buffered
-bool IbusTrx::transceive() {
+bool IbusTrx::available() {
   // clear old message before attempting to read new data
   if (rx_msg_waiting) {
     clearBuffer();
@@ -35,8 +36,8 @@ bool IbusTrx::transceive() {
     clearBuffer();
   }
   // if data is available, buffer it up
-  if (Serial.available()) {
-    uint8_t rx_byte = Serial.read();    
+  if (serialPort->available()) {
+    uint8_t rx_byte = serialPort->read();    
     // ignore loopback bytes coming in right after transmitting
     if (tx_bytes > 0 && !tx_msg_waiting) {
       tx_bytes--;
@@ -51,8 +52,8 @@ bool IbusTrx::transceive() {
   // assume bus is clear for sending after a short period of inactivity
   if (tx_msg_waiting && millis()-t_last_rx_byte >= 32) {
     // send all bytes in the transmit buffer
-    for (int b = 0; b < tx_bytes; b++) {
-      Serial.write(tx_buffer[b]);
+    for (uint8_t b = 0; b < tx_bytes; b++) {
+      serialPort->write(tx_buffer[b]);
     }    
     tx_msg_waiting = false; // clear tx wait flag
   }
@@ -92,7 +93,7 @@ bool IbusTrx::checkMessage() {
 }
 
 // creates and returns an IbusMessage object containing the contents of the message
-IbusMessage IbusTrx::message() {
+IbusMessage IbusTrx::readMessage() {
   IbusMessage ibusMessage(rx_buffer);
   clearBuffer(); // clear receive buffer after reading the message
   return ibusMessage;
@@ -110,19 +111,17 @@ void IbusTrx::clearBuffer() {
   rx_msg_waiting = false;
 }
 
-// returns inverse of tx wait flag
-bool IbusTrx::clearToSend() {
-  return !tx_msg_waiting;
+// returns tx wait flag
+bool IbusTrx::transmitWaiting() {
+  return tx_msg_waiting;
 }
 
 // prepare message for transmission
-void IbusTrx::send(uint8_t *message) {
-  // copy message to transmit buffer before deleting it
+void IbusTrx::write(uint8_t message[]) {
+  // copy message to transmit buffer
   for (uint8_t p = 0; p <= message[1]; p++) {
     tx_buffer[p] = message[p];
   }
-  delete[] message;
-  message = NULL;
   // calculate checksum
   uint8_t chksum = tx_buffer[0] ^ tx_buffer[1];
   for (uint8_t i = 2; i < tx_buffer[1]+1; i++) {

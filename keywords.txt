@@ -1,21 +1,50 @@
+#######################################
+# Syntax Coloring Map For IbusTrx
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
 IbusTrx	KEYWORD1
 IbusMessage	KEYWORD1
 
-transceive	KEYWORD2
-message	KEYWORD2
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+available	KEYWORD2
+readmessage	KEYWORD2
 begin	KEYWORD2
+end	KEYWORD2
+transmitWaiting	KEYWORD2
 source	KEYWORD2
 destination	KEYWORD2
 length	KEYWORD2
 b	KEYWORD2
 
-M_GM5	KEYWORD3
-M_DIA	KEYWORD3
-M_EWS	KEYWORD3
-M_MFL	KEYWORD3
-M_IHKA	KEYWORD3
-M_RAD	KEYWORD3
-M_IKE	KEYWORD3
-M_ALL	KEYWORD3
-M_TEL	KEYWORD3
-M_LCM	KEYWORD3
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+M_GM5	LITERAL1
+M_DIA	LITERAL1
+M_EWS	LITERAL1
+M_MFL	LITERAL1
+M_IHKA	LITERAL1
+M_RAD	LITERAL1
+M_IKE	LITERAL1
+M_ALL	LITERAL1
+M_TEL	LITERAL1
+M_LCM	LITERAL1
+GM5_SET_IO	LITERAL1
+GM5_BTN_DOME_LIGHT	LITERAL1
+GM5_BTN_CENTER_LOCK	LITERAL1
+GM5_BTN_TRUNK_OPEN	LITERAL1
+GM5_BTN_WINDOW_DRIVER_DOWN	LITERAL1
+GM5_BTN_WINDOW_DRIVER_UP	LITERAL1
+GM5_BTN_WINDOW_PASSENGER_DOWN	LITERAL1
+GM5_BTN_WINDOW_PASSENGER_UP	LITERAL1
+GM5_LED_ALARM_WARNING	LITERAL1
+GM5_INPUT_STATE_DIGITAL	LITERAL1
+GM5_INPUT_STATE_ANALOG	LITERAL1

@@ -17,26 +17,23 @@ source address
 IbusTrx ibusTrx;
 
 void setup(){
-  // begin listening for IBUS messages on the hardware serial port
-  // note: this library is hard coded to the first hardware serial port
-  // software-based serial ports are absolutely not recommended for this
-  ibusTrx.begin();
+  // begin listening for IBUS messages 
+  // timing is critical, software-based serial ports are absolutely not recommended for receiving IBUS data
+  ibusTrx.begin(Serial);
   pinMode(13, OUTPUT);
 }
 void loop(){
-  // transceive() has to be called repeatedly, with no delay() in between
-  // this function buffers the incoming bytes and transmits anything waiting in the transmit queue 
-  // note: messages are only transmitted when the bus is clear
-  // returns true if a valid message has been buffered
-  bool messageWaiting = ibusTrx.transceive();
+  // available() has to be called repeatedly, with no delay() in between
+  // this function returns true if a new message is available for reading
+  bool messageWaiting = ibusTrx.available();
 
   // if there's a message waiting, check it out
   if (messageWaiting) {
-    // grab incoming message from buffer (this copies the message and clears the receive buffer)
-    IbusMessage message = ibusTrx.message();
+    // read the incoming message (this copies the message and clears the receive buffer)
+    IbusMessage message = ibusTrx.readMessage();
 
     // every module on the IBUS has its own 8-bit address.
-    // the following addresses are defined in the Ibustrx library:
+    // the following addresses are defined in the IbusTrx library:
     // M_GM5: body control module
     // M_DIA: diagnostic computer
     // M_EWS: immobilizer
@@ -48,25 +45,26 @@ void loop(){
     // M_TEL: telephone module
     // M_LCM: light control module
     
-    // the source() and destination() functions return the addresses
+    // these two functions return the source and destination addresses of the IBUS message:
     unsigned int messageSource = message.source();
     unsigned int messageDestination = message.destination();
 
     // filtering example: 
-    // (only read messages sent by the steering to the radio)
+    // in this case we're only interested in messages sent by the steering wheel controls to the radio
     if (messageSource == M_MFL && messageDestination == M_RAD) {
       // the length of the message payload, including the checksum
-      // this function is rarely needed, in most cases it's already known how many fields there are based on the message type
+      // this function is rarely needed, 
+      // in most cases the number of payload fields is already known based on the type of message
       unsigned int messageLength = message.length();
 
       // the b(n) function returns the n'th byte of the message payload
-      // b(0) will return the first byte, b(1) the second, etc.
+      // b(0) will return the first byte, b(1) returns the second byte, etc.
       unsigned int messageCommand = message.b(0); // the first byte usually identifies what type of message it is
       
-      // command 0x32 from the steering wheel happens to be related to the volume controls
+      // command 0x32 happens to be related to the volume controls
       if (messageCommand == 0x32) {
-        // in this case, the least significant bit of the second byte tells us whether this is a "volume up" or a "volume down" instruction
-        // several fields are often packed into a single byte, the use of bitwise logic is recommended when working with IBUS data
+        // in this case, the least significant bit of the second payload byte tells us whether this is a "volume up" or a "volume down" instruction
+        // several fields are often packed into a single byte, playing around with bitwise operators is recommended when working with IBUS data
         if (message.b(1) & 0x01){
           // volume up pressed, turn LED on
           digitalWrite(13, HIGH);
@@ -83,5 +81,5 @@ void loop(){
   // rest of your program goes here...
 
   // remember to never use a blocking function like delay() in your program,
-  // always use millis() or micros() if you have to implement an interval somewhere
+  // always use millis() or micros() if you have to implement a delay somewhere
 }

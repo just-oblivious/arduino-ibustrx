@@ -1,5 +1,5 @@
 /*
-  IbusTrx (v2.3.0)
+  IbusTrx (v2.4.0)
   Arduino library for sending and receiving messages over the BMW infotainment bus (IBUS).
   Author: D. van Gent
   More info: https://0x7b.nl/ibus
@@ -17,15 +17,16 @@
 
 class IbusTrx{
   public:
-    void begin();
+    void begin(HardwareSerial &userPort);
     void end();
-    void send(uint8_t *message);
-    bool transceive();
-    bool clearToSend();
+    void write(uint8_t message[]);
+    bool available();
+    bool transmitWaiting();
     uint8_t length();
-    IbusMessage message();
+    IbusMessage readMessage();
 
   private:
+    HardwareSerial* serialPort;
     void clearBuffer();
     bool checkMessage();
     bool tx_msg_waiting = false; // message waiting in transmit buffer
