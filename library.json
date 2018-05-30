@@ -1,7 +1,7 @@
 {
 	"name": "IbusTrx",
 	"description": "Arduino library for sending and receiving messages over the BMW infotainment bus (IBUS).",
-	"ketwords": "BMW,IBUS,E46,E39,SWC,steering wheel controls,vehicle,car",
+	"keywords": "BMW,IBUS,E46,E39,SWC,steering wheel controls,vehicle,car",
 	"version": "2.4.0",
 	"authors":
 	[
